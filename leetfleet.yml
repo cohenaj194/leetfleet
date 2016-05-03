@@ -1,0 +1,48 @@
+---
+- hosts: localhost
+  gather_facts: no
+
+  #enters information about the container you would like to deploy and what your service should be called
+  vars_prompt:
+
+   - name: container
+     prompt: "What is the name of your container on dockerhub"
+     private: no
+   
+   - name: port 
+     prompt: "What port of you application is web facing (ex: 80 for appache or nginx app, 3000 for nodejs, 8000 for django, ect)"
+     private: no
+
+   - name: someapp
+     prompt: "What would you like to call your service"
+     private: no
+
+  tasks:
+   #creates a directory in the ./temp/ directory to store the created files
+   - command: "mkdir ./temp/{{someapp}}"
+   
+   #copies files into the new directory and inserts data from the prompts into the files
+   - template:
+      src: "./template/{{item.src}}"
+      dest: "./temp/{{someapp}}/{{item.dest}}"
+     with_items:
+      - src: "someapp-discovery@.service"
+        dest: "{{someapp}}-discovery@.service"
+      - src: "someapp-lb@.service"
+        dest: "{{someapp}}-lb@.service"
+      - src: "someapp@.service"
+        dest: "{{someapp}}@.service"
+
+# I would like to solve my issues running fleetctl so that the playbook can run the following commands
+# this would allow the playbook to create the fleet service files and submit them to a CoreOS cluster
+#   - command: "{{item}}"
+#     with_items:
+#      - "eval `ssh-agent -s`"
+#      - "ssh-add ~/.ssh/id_rsa"
+#      - "export FLEETCTL_TUNNEL=1.2.3.4"
+#      - "fleetctl submit ./temp/{{someapp}}/{{someapp}}@.service"
+#      - "fleetctl submit ./temp/{{someapp}}/{{someapp}}-discovery@.service"
+#      - "fleetctl submit ./temp/{{someapp}}/{{someapp}}-lb.service"
+
+
+
