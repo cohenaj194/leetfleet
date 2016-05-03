@@ -1,3 +1,6 @@
+Based on code from https://github.com/willrstern/production-docker-ha-architecture
+
+
 leetfleet creates fleet service files for web facing application containers
 It creates the following:
   - a service to deploy a web application container (someapp@.service),
